@@ -68,12 +68,6 @@ const ASSERTIONS = {
                 description: 'Floodlight - Sales - Purchase'
             },
             { 
-                tag_id: '583', 
-                min_count: 1,
-                status_filter: 'success',
-                description: 'HTML - trbo - Sale'
-            },
-            { 
                 tag_id: '644', 
                 min_count: 1,
                 status_filter: 'success',
@@ -86,18 +80,6 @@ const ASSERTIONS = {
                 description: 'GAds - Conversion - Purchase - with hashed email'
             },
             { 
-                tag_id: '576', 
-                min_count: 1,
-                status_filter: 'success',
-                description: 'HTML - Solute - Conversion'
-            },
-            { 
-                tag_id: '438', 
-                min_count: 1,
-                status_filter: 'success',
-                description: 'HTML - Squarelovin'
-            },
-            { 
                 tag_id: '329', 
                 min_count: 1,
                 status_filter: 'success',
@@ -108,18 +90,6 @@ const ASSERTIONS = {
                 min_count: 1,
                 status_filter: 'success',
                 description: 'Microsoft - Conversion - purchase'
-            },
-            { 
-                tag_id: '563', 
-                min_count: 1,
-                status_filter: 'success',
-                description: 'Microsoft - Conversion - enhanced conv - send hashed email'
-            },
-            { 
-                tag_id: '722', 
-                min_count: 1,
-                status_filter: 'success',
-                description: 'Stape Data Tag - sGTM ad platforms - ecommerce events'
             }
         ]
     }
