@@ -1,0 +1,76 @@
+config {
+  type: "table", 
+  schema: "assertions",
+  description: "Checking if tag_status = failure with threshold",
+  dependencies: ["assertion_logs"],
+  tags: ["assertions"],
+  disabled: !require("includes/config.js").ASSERTIONS.tag_failure.enabled
+}
+
+select
+  'running assertion' as placeholder
+
+pre_operations {
+  -- declare variables and default values
+  declare assertion string default 'tag_failure_check';
+  declare check int64;
+  declare expectation int64 default ${config.ASSERTIONS.tag_failure.threshold || 0}; -- use threshold from config
+  declare sample string;
+  declare assertion_status string default 'pass';
+  declare error_msg string default 'tag failures within acceptable threshold';
+  declare time_interval string default '${config.ASSERTIONS.tag_failure.time_interval}';
+  
+  -- get count of non-success tag statuses
+  set
+    (check, sample) = (
+      select
+        as struct 
+        count(*) as total_failed,
+        string_agg(distinct tag_name, ", ") as failed_tags
+      from ${ref('stg_gtm_tag_logs')}
+      where tag_status = 'failure'
+        and timestamp >= timestamp_sub(current_timestamp(), interval ${config.ASSERTIONS.tag_failure.time_interval})
+        ${config.ASSERTIONS.tag_failure.exclude_tag_ids?.length > 0 ? `and tag_id not in (${config.ASSERTIONS.tag_failure.exclude_tag_ids.map(p => `'${p}'`).join(', ')})` : ''}
+    );
+      
+  -- check if failed count exceeds threshold
+  if check > expectation then
+    set assertion_status = 'fail';
+    set error_msg = format("%d failed tags found in last %s (threshold: %d). Failed tags: %s", 
+                          check, time_interval, expectation, sample);
+  else 
+    set error_msg = format("%d failed tags found in last %s (within threshold of %d)", 
+                          check, time_interval, expectation);
+  end if;
+    
+  -- log assertions
+  insert into ${ref("assertion_logs")} (
+    inserted_at,
+    assertion_name,
+    table_name,
+    expectation,
+    count,
+    sample,
+    assertion_status,
+    error_msg
+  )
+  values (
+    current_timestamp(),
+    assertion,
+    '${ref("stg_gtm_tag_logs")}',
+    expectation,
+    check,
+    sample,
+    assertion_status,
+    error_msg
+  );
+}
+
+post_operations {
+  drop table ${self()};
+    
+  -- raise error only if assertion failed (exceeds threshold)
+  if check > expectation then
+    raise using message = error_msg;
+  end if
+}

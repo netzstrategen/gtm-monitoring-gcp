@@ -1,0 +1,180 @@
+config {
+  type: "table", 
+  schema: "assertions",
+  description: "Checking if event count is above threshold with time exclusions and timezone support",
+  dependencies: ["assertion_logs"],
+  tags: ["assertions"],
+  disabled: !require("includes/config.js").ASSERTIONS.low_event_count.enabled
+}
+
+select
+  'running assertion' as placeholder
+
+pre_operations {
+  -- declare variables and default values
+  declare assertion string default 'low_event_count_check';
+  declare check int64;
+  declare expectation int64 default 0;
+  declare sample string;
+  declare assertion_status string default 'pass';
+  declare error_msg string default 'all event counts above thresholds';
+  declare time_interval string default '${config.ASSERTIONS.low_event_count.time_interval || "1 hour"}';
+  declare passing_events string;
+  declare total_expected_events int64;
+  declare total_configured_events int64;
+  declare current_timezone_time time;
+  declare timezone_info string default '${config.ASSERTIONS.low_event_count.timezone || "UTC"}';
+  declare should_skip boolean default false;
+  
+  -- get current time in the configured timezone
+  set current_timezone_time = time(datetime(current_timestamp(), timezone_info));
+  
+  -- check if we're currently in any excluded time range (dynamic from config)
+  ${config.ASSERTIONS.low_event_count.exclude_time_ranges?.length > 0 ? 
+    config.ASSERTIONS.low_event_count.exclude_time_ranges.map(range => {
+      const startTime = range.start_time;
+      const endTime = range.end_time;
+      
+      // Handle ranges that cross midnight vs same-day ranges
+      const condition = startTime > endTime 
+        ? `current_timezone_time >= parse_time('%T', '${startTime}') or current_timezone_time <= parse_time('%T', '${endTime}')`
+        : `current_timezone_time >= parse_time('%T', '${startTime}') and current_timezone_time <= parse_time('%T', '${endTime}')`;
+      
+      return `
+      if ${condition} then
+        set should_skip = true;
+      end if;`;
+    }).join(''): 
+    '-- no time exclusions configured'
+  }
+  
+  if should_skip then
+    set assertion_status = 'skipped';
+    set error_msg = format('Assertion skipped - current time %s (%s) is in excluded time range${config.ASSERTIONS.low_event_count.exclude_time_ranges ? 
+      's: ' + config.ASSERTIONS.low_event_count.exclude_time_ranges.map(r => r.start_time + '-' + r.end_time).join(', ') : 
+      ''}', 
+                          format_time('%T', current_timezone_time),
+                          timezone_info);
+    
+    -- log the skip
+    insert into ${ref("assertion_logs")} (
+      inserted_at,
+      assertion_name,
+      table_name,
+      expectation,
+      count,
+      sample,
+      assertion_status,
+      error_msg
+    )
+    values (
+      current_timestamp(),
+      assertion,
+      '${ref("stg_gtm_tag_logs")}',
+      expectation,
+      0,
+      'skipped',
+      assertion_status,
+      error_msg
+    );
+    
+  else
+    -- run normal assertion logic only during active hours
+    set
+      (check, sample, passing_events, total_expected_events, total_configured_events) = (
+        select
+          as struct 
+          countif(status = 'fail') as failed_events,
+          string_agg(
+            case 
+              when status = 'fail' 
+              then format("%s: %d/%d (%s)", 
+                         event_name, 
+                         event_count, 
+                         expected_count,
+                         failure_reason)
+              else null 
+            end, 
+            "; "
+            order by (expected_count - event_count) desc  -- worst failures first
+          ) as failed_breakdown,
+          string_agg(
+            case 
+              when status = 'pass' 
+              then format("%s: %d/%d ✓", 
+                         event_name, 
+                         event_count, 
+                         expected_count)
+              else null 
+            end, 
+            "; "
+          ) as passed_breakdown,
+          sum(expected_count) as total_expected,
+          count(*) as total_configured
+        from (
+          ${helpers.generateEventCountQueryWithThresholds(ref('stg_gtm_tag_logs'), config.ASSERTIONS.low_event_count)}
+        )
+      );
+        
+    if check > expectation then
+      set assertion_status = 'fail';
+      set error_msg = format(
+        "%d of %d event types failed thresholds in last %s (%s timezone). Failed: [%s]%s", 
+        check, 
+        total_configured_events,
+        time_interval,
+        timezone_info,
+        coalesce(sample, 'none'),
+        case 
+          when passing_events is not null 
+          then format(". Passing: [%s]", passing_events)
+          else ''
+        end
+      );
+    else 
+      set error_msg = format(
+        "All %d event types above thresholds in last %s (%s timezone)%s", 
+        total_configured_events,
+        time_interval,
+        timezone_info,
+        case 
+          when passing_events is not null 
+          then format(". Details: [%s]", passing_events)
+          else ''
+        end
+      );
+    end if;
+      
+    -- log assertions with enhanced sample data
+    insert into ${ref("assertion_logs")} (
+      inserted_at,
+      assertion_name,
+      table_name,
+      expectation,
+      count,
+      sample,
+      assertion_status,
+      error_msg
+    )
+    values (
+      current_timestamp(),
+      assertion,
+      '${ref("stg_gtm_tag_logs")}',
+      expectation,
+      check,
+      coalesce(sample, passing_events),  -- store either failed or passed events as sample
+      assertion_status,
+      error_msg
+    );
+
+  end if;
+}
+
+post_operations {
+  drop table ${self()};
+    
+  -- raise error only if assertion actually failed (not skipped)
+  if assertion_status = 'fail' then
+    raise using message = error_msg;
+  end if
+}

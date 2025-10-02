@@ -1,0 +1,5 @@
+defaultProject: gtm-tag-monitoring-terraform
+defaultLocation: europe-west3
+defaultDataset: dataform
+defaultAssertionDataset: assertions
+dataformCoreVersion: 3.0.0

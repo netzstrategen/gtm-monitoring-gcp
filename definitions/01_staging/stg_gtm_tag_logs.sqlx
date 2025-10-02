@@ -1,0 +1,85 @@
+config {
+  type: "incremental",
+  description: "Parse event logs from URL parameters with tag extraction. Every row is a fired tag",
+  schema: "01_staging",
+  tags: ["logs"],
+  bigquery: {
+    partitionBy: "date(timestamp)",
+    clusterBy: ["event_name", "tag_id"]
+  },
+}
+
+/* incrementality */
+pre_operations {
+  declare timestamp_checkpoint timestamp;
+  set timestamp_checkpoint = (
+    ${when(incremental(),
+    `select max(timestamp) from ${self()}`,
+    `select timestamp('1970-01-01')`)}
+  );
+}
+
+with decode_url_log as (
+  select
+    timestamp,
+    ${helpers.urlDecodeSQL('http_request.request_url')} as decoded_url
+  from ${ref('_AllLogs')}
+  where timestamp >= timestamp_checkpoint
+    and http_request.request_url is not null
+),
+
+parse_logs as (
+  select
+    timestamp,
+    regexp_extract(decoded_url, r"eventName=([^&]+)") as event_name,
+    regexp_extract(decoded_url, r"eventTimestamp=([^&]+)") as event_timestamp,
+    (select regexp_extract_all(decoded_url, "&tag\\d+id=[^&]+&tag\\d+nm=[^&]+&tag\\d+st=[^&]+&tag\\d+et=[^&]+")) as tag_string_regex,
+    ${when(
+      config.EVENT_PARAMS_ARRAY.length > 0,
+      config.EVENT_PARAMS_ARRAY.map(param => helpers.extractFromURL(param.name, param.alias)).join(',\n    ')
+    )}
+  from decode_url_log
+  where regexp_contains(decoded_url, r"eventName=")
+),
+
+flatten_tags as (
+  select
+    * except (tag_string_regex, tag_string_unnest),
+    tag_string_unnest as tag_string
+  from parse_logs
+  left join unnest(tag_string_regex) as tag_string_unnest
+),
+
+extract_tag_details as (
+  select
+    * except (tag_string),
+    regexp_extract(tag_string, r"&tag\d+id=([^&]+)") as tag_id,
+    regexp_extract(tag_string, r"&tag\d+nm=([^&]+)") as tag_name,
+    regexp_extract(tag_string, r"&tag\d+st=([^&]+)") as tag_status,
+    regexp_extract(tag_string, r"&tag\d+et=([^&]+)") as tag_execution_time
+  from flatten_tags
+  where tag_string is not null
+),
+
+create_event_id as (
+  select
+    farm_fingerprint(coalesce(event_name, '') || coalesce(event_timestamp, '')) as event_id,
+    *
+  from extract_tag_details
+  where event_name is not null
+),
+
+dedupe as (
+  select
+    farm_fingerprint(event_id || tag_id) as surrogate_key,
+    *
+  from create_event_id
+  qualify row_number() over (
+    partition by farm_fingerprint(event_id || tag_id)
+    order by event_timestamp desc
+  ) = 1
+)
+
+select
+  *
+from dedupe

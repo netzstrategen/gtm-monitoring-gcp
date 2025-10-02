@@ -1,0 +1,32 @@
+project_id         = "gcp-project-id"
+region             = "europe-west4" # only single region is supported
+domain             = "monitor.dtv.dev"
+endpoint           = "/tag"
+resource_prefix    = "dtv" # make it unique
+log_retention_days = 30 # possible: 1-3650 days
+
+# Alerting
+error_log_bucket_retention_period = 180
+notification_users = [
+    {
+      name  = "Your Name"
+      email = "email@gmail.com"
+    }
+  ]
+
+# Only change this if you know which logs you want to get alerted by
+error_log_filter = <<-EOT
+  resource.type="bigquery_project" AND
+  severity="ERROR" AND
+  protoPayload.metadata.jobChange.job.jobConfig.labels.dataform_workflow_execution_action_id_schema="assertions"
+EOT
+
+# Dataform repo
+github_token           = ""
+github_username        = "datatovalue"
+github_repository      = "datatovalue-gtm-tag-monitoring-gcp"
+github_default_branch  = "main"
+# Dataform schedule
+dataform_release_cron  = "*/14 * * * *"  # Every 14 minutes
+dataform_workflow_cron = "*/15 * * * *"  # Every 15 minutes
+dataform_timezone      = "Europe/Amsterdam"

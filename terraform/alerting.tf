@@ -1,0 +1,94 @@
+# Local values for better organization
+locals {
+  # Extract notification channel IDs for alert policy configuration
+  notification_channel_ids = values(google_monitoring_notification_channel.notification_channel)[*].id
+  
+  # Alert documentation with dynamic project information and troubleshooting guidance
+  alert_documentation = <<-EOT
+    GTM Tag Monitoring issues detected in project: ${var.project_id}.
+    This alert fires when a Dataform assertion fails.
+    Check the extracted labels and the logs for further details!
+  EOT
+}
+
+# Log Bucket Configuration
+resource "google_logging_project_bucket_config" "error_bucket" {
+  project        = var.project_id
+  location       = var.region
+  retention_days = var.error_log_bucket_retention_period
+  bucket_id      = local.resource_names.error_bucket
+
+  description = "Bucket for storing GTM Tag Monitoring error logs"
+
+  depends_on = [google_project_service.logging_api]
+
+}
+
+# Log Sink Configuration
+resource "google_logging_project_sink" "error_sink" {
+  name        = local.resource_names.error_sink
+  project     = var.project_id
+  destination = "logging.googleapis.com/${google_logging_project_bucket_config.error_bucket.name}"
+  filter      = var.error_log_filter
+
+  description = "Sink for routing GTM Tag Monitoring errors to dedicated bucket"
+
+  # Ensure exclusive write access
+  unique_writer_identity = true
+
+  depends_on = [google_logging_project_bucket_config.error_bucket]
+}
+
+# Notification Channels
+resource "google_monitoring_notification_channel" "notification_channel" {
+  for_each = { for user in var.notification_users : user.email => user }
+
+  project      = var.project_id
+  display_name = each.value.name
+  type         = "email"
+  
+  labels = {
+    email_address = each.value.email
+  }
+
+  description  = "Email notification channel for ${each.value.name}"
+  force_delete = false
+  enabled      = true
+
+  depends_on = [google_project_service.monitoring_api]
+}
+
+# Alert Policy
+resource "google_monitoring_alert_policy" "tag_monitoring_errors" {
+  project      = var.project_id
+  display_name = "GTM Tag Monitoring Alerts"
+  severity = "ERROR"
+  combiner     = "OR"
+
+  documentation {
+    content   = local.alert_documentation
+    mime_type = "text/markdown"
+  }
+
+  conditions {
+    display_name = "GTM Tag Monitoring Alerts"
+    condition_matched_log {
+      filter = var.error_log_filter
+      label_extractors = {
+        "job_id"          = "EXTRACT(protoPayload.serviceData.jobCompletedEvent.job.jobName.jobId)"
+        "assertion_name"  = "EXTRACT(protoPayload.metadata.jobChange.job.jobConfig.labels.dataform_workflow_execution_action_id_name)"
+        "error_message"   = "EXTRACT(protoPayload.status.message)"
+        "principal_email" = "EXTRACT(protoPayload.authenticationInfo.principalEmail)"
+      }
+    }
+  }
+
+  notification_channels = local.notification_channel_ids
+
+  depends_on = [
+    google_project_service.monitoring_api,
+    google_project_service.logging_api,
+    google_logging_project_sink.error_sink,
+    google_monitoring_notification_channel.notification_channel
+  ]
+}

@@ -1,0 +1,18 @@
+config {
+    type: "operations",
+    schema: "assertions",
+    hasOutput: true
+}
+
+create table if not exists ${self()} (
+        inserted_at timestamp,
+        assertion_name string,
+        table_name string,
+        expectation int64,
+        count int64,
+        sample string,
+        assertion_status string,
+        error_msg string
+      )
+partition by date(inserted_at)
+options (description='''Table that logs each assertion run whether it failed or not''')

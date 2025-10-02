@@ -1,0 +1,112 @@
+config {
+  type: "table", 
+  schema: "assertions",
+  description: "Checking whether key params are null with detailed field breakdown and thresholds",
+  dependencies: ["assertion_logs"],
+  tags: ["assertions"],
+  disabled: !require("includes/config.js").ASSERTIONS.non_null.enabled
+}
+
+select
+  'running assertion' as placeholder
+
+pre_operations {
+  -- declare variables and default values
+  declare assertion string default 'non_null_check';
+  declare check int64;
+  declare expectation int64 default 0;
+  declare sample string;
+  declare assertion_status string default 'pass';
+  declare error_msg string default 'all fields within null thresholds';
+  declare field_breakdown string;
+  declare passing_fields string;
+  declare total_fields int64;
+    
+  -- run assertion and collect detailed field breakdown with thresholds
+  set
+    (check, sample, field_breakdown, passing_fields, total_fields) = (
+      select
+        as struct 
+        sum(case when status = 'fail' then 1 else 0 end) as failed_fields,
+        string_agg(
+          case 
+            when status = 'fail'
+            then format("%s: %d/%d null values (exceeded threshold)", 
+                       field_name, null_count, threshold)
+            else null 
+          end, 
+          "; "
+          order by (null_count - threshold) desc  -- worst violations first
+        ) as failed_breakdown,
+        string_agg(
+          format("%s: %d null values (threshold: %d)", 
+                 field_name, null_count, threshold), 
+          "; " 
+          order by null_count desc
+        ) as all_fields_breakdown,
+        string_agg(
+          case 
+            when status = 'pass'
+            then format("%s: %d/%d ✓", field_name, null_count, threshold)
+            else null 
+          end, 
+          "; "
+        ) as passed_breakdown,
+        count(*) as total_configured_fields
+      from (
+        ${helpers.generateNonNullAssertionsWithCounts(ref('stg_gtm_tag_logs'), config.ASSERTIONS.non_null)}
+      )
+    );
+      
+  if check > expectation then
+    set assertion_status = 'fail';
+    set error_msg = format(
+      "%d of %d fields exceeded null thresholds. Failed: [%s]%s", 
+      check,
+      total_fields, 
+      coalesce(sample, 'none'),
+      case 
+        when passing_fields is not null 
+        then format(". Passing: [%s]", passing_fields)
+        else ''
+      end
+    );
+  else
+    set error_msg = format(
+      "All %d fields within null thresholds. Details: [%s]", 
+      total_fields,
+      coalesce(field_breakdown, 'no data available')
+    );
+  end if;
+    
+  -- log assertions
+  insert into ${ref("assertion_logs")} (
+    inserted_at,
+    assertion_name,
+    table_name,
+    expectation,
+    count,
+    sample,
+    assertion_status,
+    error_msg
+  )
+  values (
+    current_timestamp(),
+    assertion,
+    '${ref("stg_gtm_tag_logs")}',
+    expectation,
+    check,
+    sample,
+    assertion_status,
+    error_msg
+  );
+}
+
+post_operations {
+  drop table ${self()};
+    
+  -- raise error if assertion failed
+  if check > expectation then
+    raise using message = error_msg;
+  end if
+}
