@@ -7,6 +7,8 @@ log_retention_days = 30 # possible: 1-3650 days
 
 # Alerting
 error_log_bucket_retention_period = 180
+
+# You can add multiple users
 notification_users = [
     {
       name  = "Your Name"

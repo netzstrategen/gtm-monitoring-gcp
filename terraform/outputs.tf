@@ -8,6 +8,11 @@ output "endpoint" {
   value       = "https://${var.domain}${var.endpoint}"
 }
 
+output "dataform_service_account" {
+  description = "Dataform custom service account email address"
+  value       = google_service_account.dataform.email
+}
+
 output "dns_configuration_reminder" {
   description = "Reminder to set up DNS"
   value       = "IMPORTANT: Don't forget to create an A record for ${var.domain} pointing to ${google_compute_global_address.tag_monitoring_ip.address} in your DNS settings. Certificate provisioning will fail until this is done."

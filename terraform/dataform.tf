@@ -1,3 +1,25 @@
+# Create custom service account for Dataform
+resource "google_service_account" "dataform" {
+  project      = var.project_id
+  account_id   = "${var.resource_prefix}-dataform-sa"
+  display_name = "Dataform Custom Service Account"
+  description  = "Custom service account for running Dataform workflows"
+}
+
+# Grant BigQuery Data Editor permission to the custom service account
+resource "google_project_iam_member" "dataform_bigquery_data_editor" {
+  project = var.project_id
+  role    = "roles/bigquery.dataEditor"
+  member  = "serviceAccount:${google_service_account.dataform.email}"
+}
+
+# Grant BigQuery Job User permission to the custom service account
+resource "google_project_iam_member" "dataform_bigquery_job_user" {
+  project = var.project_id
+  role    = "roles/bigquery.jobUser"
+  member  = "serviceAccount:${google_service_account.dataform.email}"
+}
+
 # Create secret for GitHub token
 resource "google_secret_manager_secret" "github_token" {
   project   = var.project_id
@@ -22,6 +44,8 @@ resource "google_dataform_repository" "main" {
   project  = var.project_id
   region   = var.region
   name     = local.resource_names.dataform_repo
+
+  service_account = google_service_account.dataform.email
   
   # GitHub connection configuration
   git_remote_settings {
@@ -36,7 +60,7 @@ resource "google_dataform_repository" "main" {
   ]
 }
 
-# Grant the Dataform service agent access to the GitHub token secret
+# Grant the Dataform service account access to the GitHub token secret
 resource "google_secret_manager_secret_iam_member" "dataform_github_token_access" {
   project   = var.project_id
   secret_id = google_secret_manager_secret.github_token.secret_id
@@ -47,6 +71,29 @@ resource "google_secret_manager_secret_iam_member" "dataform_github_token_access
     google_project_service.dataform_api,
     google_secret_manager_secret.github_token,
     google_dataform_repository.main
+  ]
+}
+
+# Allow the default Dataform service agent to impersonate the custom service account
+resource "google_service_account_iam_member" "dataform_agent_token_creator" {
+  service_account_id = google_service_account.dataform.name
+  role               = "roles/iam.serviceAccountTokenCreator"
+  member             = "serviceAccount:service-${data.google_project.current.number}@gcp-sa-dataform.iam.gserviceaccount.com"
+  
+  depends_on = [
+    google_project_service.dataform_api,
+    google_service_account.dataform
+  ]
+}
+
+resource "google_service_account_iam_member" "dataform_agent_user" {
+  service_account_id = google_service_account.dataform.name
+  role               = "roles/iam.serviceAccountUser"
+  member             = "serviceAccount:service-${data.google_project.current.number}@gcp-sa-dataform.iam.gserviceaccount.com"
+  
+  depends_on = [
+    google_project_service.dataform_api,
+    google_service_account.dataform
   ]
 }
 

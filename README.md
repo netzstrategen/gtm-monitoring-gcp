@@ -1,9 +1,10 @@
 1. Create a GCP project with billing enabled (make note of the project ID)
-2. Copy this Github template to your Github account
+2. Use this repo as a Github template
 3. If you want to keep your repo private, create a Github token
+4. Run git clone in your terminal to have all files locally
 4. Modify the variables in /terraform/terraform.tfvars.example
 5. Rename the variable file to terraform.tfvars
-6. Download gcloud and Terraform if you haven't
+6. Download gcloud and Terraform CLI if you haven't
 7. Log in to gcloud using `gcloud auth login` or `gcloud auth application-default login`
 8. Set the current project to the one you created in step 1. `gcloud config set project project-id`
 9. Run Terraform
@@ -12,6 +13,8 @@ terraform init
 terraform plan
 terraform apply
 terraform init -migrate-state
+
+10. Copy the IP address in your terminal and add an A record in your DNS settings that points that domain to the IP
 
 10. Import `Google Tag Manager Monitor - Enhanced.tpl` to your web GTM container
 11. Configure your GTM Tag monitor tag based on which events + parameters it should track

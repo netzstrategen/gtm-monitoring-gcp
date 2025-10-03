@@ -82,7 +82,13 @@ resource "google_monitoring_alert_policy" "tag_monitoring_errors" {
       }
     }
   }
-
+  
+  alert_strategy {
+    notification_rate_limit {
+      period = "300s"
+    }  
+  }
+  
   notification_channels = local.notification_channel_ids
 
   depends_on = [
