@@ -46,6 +46,8 @@ resource "google_dataform_repository" "main" {
   name     = local.resource_names.dataform_repo
 
   service_account = google_service_account.dataform.email
+
+  deletion_policy = "FORCE"
   
   # GitHub connection configuration
   git_remote_settings {
@@ -56,7 +58,8 @@ resource "google_dataform_repository" "main" {
   
   depends_on = [
     google_project_service.dataform_api,
-    google_secret_manager_secret_version.github_token_version
+    google_secret_manager_secret_version.github_token_version,
+    google_service_account.dataform
   ]
 }
 
@@ -81,8 +84,7 @@ resource "google_service_account_iam_member" "dataform_agent_token_creator" {
   member             = "serviceAccount:service-${data.google_project.current.number}@gcp-sa-dataform.iam.gserviceaccount.com"
   
   depends_on = [
-    google_project_service.dataform_api,
-    google_service_account.dataform
+    google_dataform_repository.main
   ]
 }
 
@@ -92,8 +94,7 @@ resource "google_service_account_iam_member" "dataform_agent_user" {
   member             = "serviceAccount:service-${data.google_project.current.number}@gcp-sa-dataform.iam.gserviceaccount.com"
   
   depends_on = [
-    google_project_service.dataform_api,
-    google_service_account.dataform
+    google_dataform_repository.main
   ]
 }
 

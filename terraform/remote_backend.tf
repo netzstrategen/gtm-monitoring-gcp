@@ -3,7 +3,7 @@ resource "google_storage_bucket" "terraform_backend" {
   name     = local.resource_names.terraform_backend_bucket
   location = var.region
 
-  force_destroy               = false
+  force_destroy               = true
   public_access_prevention    = "enforced"
   uniform_bucket_level_access = true
 

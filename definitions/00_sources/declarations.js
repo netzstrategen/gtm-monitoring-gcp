@@ -1,6 +1,6 @@
 // Log view
 declare({
-    database: 'gtm-casio-com',
+    database: dataform.projectConfig.defaultProject,
     schema: 'tag_monitoring_log_link',
     name: '_AllLogs'
 });
