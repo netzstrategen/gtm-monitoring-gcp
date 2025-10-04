@@ -1,4 +1,4 @@
-defaultProject: gtm-tag-monitoring-terraform
+defaultProject: your-project-id
 defaultLocation: europe-west3
 defaultDataset: dataform
 defaultAssertionDataset: assertions
