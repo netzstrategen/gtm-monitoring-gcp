@@ -1,5 +1,5 @@
 defaultProject: your-project-id
-defaultLocation: europe-west3
+defaultLocation: your-region
 defaultDataset: dataform
 defaultAssertionDataset: assertions
 dataformCoreVersion: 3.0.0

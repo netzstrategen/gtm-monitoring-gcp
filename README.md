@@ -4,6 +4,7 @@
 4. Run git clone in your terminal to have all files locally
 5. Rename terraform.tfvars.example to terraform.tfvars
 4. Modify the variables in terraform.tfvars
+6. Change the defaultProject and defaultLocation in workflow_settings.yaml
 6. Download gcloud and Terraform CLI if you haven't
 7. Authenticate gcloud using `gcloud auth application-default login --project your-project-id`
 8. Set the current project to the one you created in step 1. `gcloud config set project project-id`
@@ -18,14 +19,25 @@ terraform init -migrate-state
 
 10. Import `Google Tag Manager Monitor - Enhanced.tpl` to your web GTM container
 11. Configure your GTM Tag monitor tag based on which events + parameters it should track
-12. Open Dataform and configure includes/config.js to set which assertion you want to enable and set the relevant config options
+12. Open Dataform repository, create a workspace
+13. configure includes/config.js to set which assertion you want to enable and set the relevant config options
+14. commit and push your changes
 
-13. If you want to destroy the infrastructure, run 
+Cost implications:
+1. Google Cloud Storage (irrelevant as it's only 2 small files)
+2. BigQuery - queries processing the Logs from the Log bucket
+3. Storing logs in the log bucket (50 GB is free per month)
+4. Global forwarding rule (fixed cost)
+
+
+13. If you want to destroy the infrastructure - just delete the project or run 
 rm backend.tf
 terraform init -migrate-state
 
+remove all Dataform workspaces
+
 `terraform destroy`
-14. You can also add Slack as a notification channel in GCP
+14. You can also (manually) add Slack as a notification channel in GCP if you like
 
 Example:
 ```js
@@ -49,7 +61,7 @@ const ASSERTIONS = {
             },
             { 
                 name: 'sku',
-                threshold: 5  // allow more nulls for sku field
+                threshold: 5
             },
             { 
                 name: 'purchase_value',
@@ -99,52 +111,16 @@ const ASSERTIONS = {
                 description: 'Floodlight - Sales - Purchase'
             },
             { 
-                tag_id: '583', 
-                min_count: 1,
-                status_filter: 'success',
-                description: 'HTML - trbo - Sale'
-            },
-            { 
-                tag_id: '644', 
-                min_count: 1,
-                status_filter: 'success',
-                description: 'Awin - Conversion Tag'
-            },
-            { 
                 tag_id: '68', 
                 min_count: 1,
                 status_filter: 'success',
-                description: 'GAds - Conversion - Purchase - with hashed email'
-            },
-            { 
-                tag_id: '576', 
-                min_count: 1,
-                status_filter: 'success',
-                description: 'HTML - Solute - Conversion'
-            },
-            { 
-                tag_id: '438', 
-                min_count: 1,
-                status_filter: 'success',
-                description: 'HTML - Squarelovin'
-            },
-            { 
-                tag_id: '329', 
-                min_count: 1,
-                status_filter: 'success',
-                description: 'Criteo - Purchase - with hashed email'
+                description: 'GAds - Conversion - Purchase'
             },
             { 
                 tag_id: '208', 
                 min_count: 1,
                 status_filter: 'success',
                 description: 'Microsoft - Conversion - purchase'
-            },
-            { 
-                tag_id: '563', 
-                min_count: 1,
-                status_filter: 'success',
-                description: 'Microsoft - Conversion - enhanced conv - send hashed email'
             },
             { 
                 tag_id: '722', 

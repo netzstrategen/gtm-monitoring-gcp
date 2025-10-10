@@ -25,10 +25,10 @@ EOT
 
 # Dataform repo
 github_token           = ""
-github_username        = "datatovalue" # the part in the URL after github.com/
-github_repository      = "datatovalue-gtm-tag-monitoring-gcp"
+github_username        = "your-user-or-org-name" # the part in the URL after github.com/
+github_repository      = "your-repo-name"
 github_default_branch  = "main"
 # Dataform schedule
 dataform_release_cron  = "*/14 * * * *"  # Every 14 minutes
 dataform_workflow_cron = "*/15 * * * *"  # Every 15 minutes
-dataform_timezone      = "Europe/Amsterdam"
+dataform_timezone      = "Europe/Amsterdam" # For release and workflow configs
