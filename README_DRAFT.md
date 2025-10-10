@@ -21,6 +21,7 @@ graph TB
         
         subgraph "BigQuery"
             LogView[_AllLogs<br/>Log View]
+            AssertionLogs[assertion_logs<br/>All Assertion Results]
         end
         
         subgraph "Dataform"
@@ -50,6 +51,7 @@ graph TB
     Staging -->|Input for| DF_Assert
     
     DF_Assert -->|Failed Assertions| ErrorBucket
+    DF_Assert -->|All Executions| AssertionLogs
     ErrorBucket -->|Triggers| AlertPolicy
     AlertPolicy -->|Sends| NotifChannel
 ```
