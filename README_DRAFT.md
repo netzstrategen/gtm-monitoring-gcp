@@ -19,8 +19,9 @@ graph TB
         GCS[Cloud Storage<br/>collect.html endpoint]
         Logs[Cloud Logging<br/>Log Sink]
         
-        subgraph "BigQuery"
+        subgraph "BigQuery Dataset"
             LogView[_AllLogs<br/>Log View]
+            Staging[stg_gtm_tag_logs<br/>Staging Table]
             AssertionLogs[assertion_logs<br/>All Assertion Results]
         end
         
@@ -28,7 +29,6 @@ graph TB
             DF_Repo[Dataform Repository<br/>GitHub Connection]
             DF_Release[Release Config<br/>Hourly Schedule]
             DF_Workflow[Workflow Config<br/>Runs Assertions]
-            Staging[Staging Tables<br/>stg_gtm_tag_logs]
             DF_Assert[Assertion Queries<br/>- Non-null checks<br/>- Event count validation<br/>- Tag failure detection<br/>- Tag count monitoring]
         end
         
@@ -47,13 +47,28 @@ graph TB
     DF_Repo --> DF_Release
     DF_Release -->|Triggers| DF_Workflow
     DF_Workflow -->|Reads| LogView
-    DF_Workflow -->|Creates| Staging
+    DF_Workflow -->|Materializes| Staging
     Staging -->|Input for| DF_Assert
     
     DF_Assert -->|Failed Assertions| ErrorBucket
-    DF_Assert -->|All Executions| AssertionLogs
+    DF_Assert -->|Materializes| AssertionLogs
     ErrorBucket -->|Triggers| AlertPolicy
     AlertPolicy -->|Sends| NotifChannel
+    
+    style GTM fill:#4285f4
+    style LB fill:#5f6368
+    style GCS fill:#5f6368
+    style Logs fill:#5f6368
+    style LogView fill:#669df6
+    style Staging fill:#669df6
+    style AssertionLogs fill:#669df6
+    style DF_Repo fill:#4285f4
+    style DF_Release fill:#5f6368
+    style DF_Workflow fill:#5f6368
+    style DF_Assert fill:#4285f4
+    style ErrorBucket fill:#5f6368
+    style AlertPolicy fill:#4285f4
+    style NotifChannel fill:#5f6368
 ```
 
 ### Project Structure
