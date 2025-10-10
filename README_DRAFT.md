@@ -27,8 +27,8 @@ graph TB
         
         subgraph "Dataform"
             DF_Repo[Dataform Repository<br/>GitHub Connection]
-            DF_Release[Release Config<br/>Hourly Schedule]
-            DF_Workflow[Workflow Config<br/>Runs Assertions]
+            DF_Release[Release Config<br/>Compiles Dataform]
+            DF_Workflow[Workflow Config<br/>Runs Dataform]
             DF_Assert[Assertion Queries<br/>- Non-null checks<br/>- Event count validation<br/>- Tag failure detection<br/>- Tag count monitoring]
         end
         
@@ -42,7 +42,7 @@ graph TB
     GTM -->|POST /collect| LB
     LB --> GCS
     GCS -->|Structured Logs| Logs
-    Logs -->|Log Sink| LogView
+    Logs -->|Linked Dataset| LogView
     
     DF_Repo --> DF_Release
     DF_Release -->|Triggers| DF_Workflow
@@ -54,21 +54,6 @@ graph TB
     DF_Assert -->|Materializes| AssertionLogs
     ErrorBucket -->|Triggers| AlertPolicy
     AlertPolicy -->|Sends| NotifChannel
-    
-    style GTM fill:#4285f4
-    style LB fill:#5f6368
-    style GCS fill:#5f6368
-    style Logs fill:#5f6368
-    style LogView fill:#669df6
-    style Staging fill:#669df6
-    style AssertionLogs fill:#669df6
-    style DF_Repo fill:#4285f4
-    style DF_Release fill:#5f6368
-    style DF_Workflow fill:#5f6368
-    style DF_Assert fill:#4285f4
-    style ErrorBucket fill:#5f6368
-    style AlertPolicy fill:#4285f4
-    style NotifChannel fill:#5f6368
 ```
 
 ### Project Structure
