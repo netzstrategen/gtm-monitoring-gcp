@@ -21,13 +21,13 @@ graph TB
         
         subgraph "BigQuery"
             LogView[_AllLogs<br/>Log View]
-            Staging[Staging Tables<br/>gtm_events]
         end
         
         subgraph "Dataform"
             DF_Repo[Dataform Repository<br/>GitHub Connection]
             DF_Release[Release Config<br/>Hourly Schedule]
             DF_Workflow[Workflow Config<br/>Runs Assertions]
+            Staging[Staging Tables<br/>stg_gtm_tag_logs]
             DF_Assert[Assertion Queries<br/>- Non-null checks<br/>- Event count validation<br/>- Tag failure detection<br/>- Tag count monitoring]
         end
         
@@ -42,12 +42,12 @@ graph TB
     LB --> GCS
     GCS -->|Structured Logs| Logs
     Logs -->|Log Sink| LogView
-    LogView -->|SQL Transform| Staging
     
     DF_Repo --> DF_Release
     DF_Release -->|Triggers| DF_Workflow
-    DF_Workflow -->|Reads| Staging
-    DF_Workflow -->|Executes| DF_Assert
+    DF_Workflow -->|Reads| LogView
+    DF_Workflow -->|Creates| Staging
+    Staging -->|Input for| DF_Assert
     
     DF_Assert -->|Failed Assertions| ErrorBucket
     ErrorBucket -->|Triggers| AlertPolicy
