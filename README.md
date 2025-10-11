@@ -6,6 +6,38 @@ A comprehensive solution for monitoring Google Tag Manager (GTM) tag firing with
 
 This project provides an end-to-end infrastructure for monitoring GTM tag execution, storing event data in BigQuery, running automated assertions on the data, and sending alerts when issues are detected. The system captures GTM tag firing events from your website and validates them against configurable thresholds and conditions.
 
+## Table of Contents
+
+- [Overview](#overview)
+- [Architecture](#architecture)
+  - [Project Structure](#project-structure)
+- [Components](#components)
+  - [1. GTM Monitoring tag](#1-gtm-monitoring-tag)
+  - [2. Infrastructure (Terraform)](#2-infrastructure-terraform)
+  - [3. Data Pipeline (Dataform)](#3-data-pipeline-dataform)
+- [Features](#features)
+  - [Monitoring Capabilities](#monitoring-capabilities)
+- [Prerequisites](#prerequisites)
+  - [Required Tools](#required-tools)
+- [Setup Instructions](#setup-instructions)
+  - [1. GCP Project Setup](#1-gcp-project-setup)
+  - [2. Repository Setup](#2-repository-setup)
+  - [3. Configure Terraform Variables](#3-configure-terraform-variables)
+  - [4. Configure Dataform Settings](#4-configure-dataform-settings)
+  - [5. Authenticate and Initialize](#5-authenticate-and-initialize)
+  - [6. Deploy Infrastructure](#6-deploy-infrastructure)
+  - [7. DNS Configuration](#7-dns-configuration)
+  - [8. GTM Configuration](#8-gtm-configuration)
+  - [9. Configure Dataform](#9-configure-dataform)
+  - [10. Optional: Add Slack Notifications Manually](#10-optional-add-slack-notifications-manually)
+- [Cost Considerations](#cost-considerations)
+- [Destroying the Infrastructure](#destroying-the-infrastructure)
+  - [Option 1: Delete the Entire Project](#option-1-delete-the-entire-project)
+  - [Option 2: Terraform Destroy](#option-2-terraform-destroy)
+- [Security Considerations](#security-considerations)
+- [License](#license)
+- [Support](#support)
+
 ## Architecture
 
 ```mermaid
@@ -382,15 +414,13 @@ terraform init -migrate-state
 terraform destroy
 ```
 
-**Important**: Delete Dataform workspaces manually before running `terraform destroy` to avoid dependency issues.
+**Important**: Delete Dataform workspaces manually before running `terraform destroy`.
 
 ## Security Considerations
 
 1. **GitHub token**: Store as a secret, never commit to repository
-2. **Service accounts**: Follow principle of least privilege
-3. **Domain access**: Ensure only your domain can send to the collection endpoint (configure CORS if needed)
-4. **Log retention**: Set appropriate retention periods to comply with data privacy regulations
-5. **PII data**: Avoid sending personally identifiable information through GTM monitoring
+2. **Log retention**: Set appropriate retention periods to comply with data privacy regulations
+3. **PII data**: Avoid sending personally identifiable information through GTM monitoring
 
 ## License
 
