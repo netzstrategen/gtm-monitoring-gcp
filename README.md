@@ -133,6 +133,7 @@ gtm-tag-monitoring-gcp/
 - Optional `eventName` override (defaults to GTM dataLayer event name)
 
 **Key features:**
+
 ✅ **Tag success/failure tracking**: Monitor which tags fired successfully or failed
 
 ✅ **Parameter non-null checks**: Ensure required parameters are present and non-null
@@ -155,6 +156,7 @@ gtm-tag-monitoring-gcp/
 - **Cloud Monitoring**: Alert policies and notification channels
 
 **Key features:**
+
 ✅ **Infrastructure-as-Code**: Version-controlled, reproducible deployments
 
 ✅ **Remote state management**: GCS backend for team collaboration and state safety
@@ -172,6 +174,7 @@ gtm-tag-monitoring-gcp/
 - **Assertion Layer** (`02_assertions`): Runs configurable data quality checks
 
 **Key features:**
+
 ✅ **SQL-based transformations**: Maintainable, testable data pipelines using familiar SQL + JavaScript for code templating
 
 ✅ **Version-controlled queries**: All SQL logic stored in GitHub with full change history
