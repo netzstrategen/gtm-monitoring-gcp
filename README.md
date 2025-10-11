@@ -4,18 +4,17 @@ A comprehensive solution for monitoring Google Tag Manager (GTM) tag firing with
 
 ## Overview
 
-This project provides an end-to-end infrastructure for monitoring GTM tag execution, storing event data in BigQuery, running automated assertions on the data, and sending alerts when issues are detected. The system captures GTM tag firing events from your website and validates them against configurable thresholds and conditions.
+This project provides an end-to-end infrastructure for monitoring GTM tag execution, storing event data in BigQuery, running automated data quality checks on the data, and sending alerts when issues are detected. The system captures GTM tag firing events from your website and validates them against configurable thresholds and conditions.
 
 ## Table of Contents
 
 - [Overview](#overview)
 - [Architecture](#architecture)
   - [Project Structure](#project-structure)
-- [Components](#components)
-  - [1. GTM Monitoring tag](#1-gtm-monitoring-tag)
+- [Components & Features](#components--features)
+  - [1. GTM Monitoring Tag](#1-gtm-monitoring-tag)
   - [2. Infrastructure (Terraform)](#2-infrastructure-terraform)
   - [3. Data Pipeline (Dataform)](#3-data-pipeline-dataform)
-- [Features](#features)
 - [Prerequisites](#prerequisites)
   - [Required Tools](#required-tools)
 - [Setup Instructions](#setup-instructions)
@@ -134,12 +133,12 @@ gtm-tag-monitoring-gcp/
 - Optional `eventName` override (defaults to GTM dataLayer event name)
 
 **Key features:**
-- ✅ **Tag success/failure tracking**: Monitor which tags fired successfully or failed
-- ✅ **Parameter non-null checks**: Ensure required parameters are present and non-null
-- ✅ **Event volume monitoring**: Alert on abnormally low event counts
-- ✅ **Tag volume monitoring**: Alert when specific tags fire below expected thresholds
-- ✅ **Custom threshold configuration**: Set different thresholds per event, parameter, or tag
-- ✅ **Time-based exclusions**: Skip monitoring during specified time ranges (e.g., overnight)
+✅ **Tag success/failure tracking**: Monitor which tags fired successfully or failed
+✅ **Parameter non-null checks**: Ensure required parameters are present and non-null
+✅ **Event volume monitoring**: Alert on abnormally low event counts
+✅ **Tag volume monitoring**: Alert when specific tags fire below expected thresholds
+✅ **Custom threshold configuration**: Set different thresholds per event, parameter, or tag
+✅ **Time-based exclusions**: Skip monitoring during specified time ranges (e.g., overnight)
 
 ### 2. Infrastructure (Terraform)
 **What it does:**
@@ -151,11 +150,11 @@ gtm-tag-monitoring-gcp/
 - **Cloud Monitoring**: Alert policies and notification channels
 
 **Key features:**
-- ✅ **Infrastructure-as-Code**: Version-controlled, reproducible deployments
-- ✅ **Remote state management**: GCS backend for team collaboration and state safety
-- ✅ **Modular configuration**: Easily customizable through variables
-- ✅ **Simple deployment**: Deploy entire infrastructure with `terraform apply`
-- ✅ **Easy cleanup**: Remove all resources with `terraform destroy`
+✅ **Infrastructure-as-Code**: Version-controlled, reproducible deployments
+✅ **Remote state management**: GCS backend for team collaboration and state safety
+✅ **Modular configuration**: Easily customizable through variables
+✅ **Simple deployment**: Deploy entire infrastructure with `terraform apply`
+✅ **Easy cleanup**: Remove all resources with `terraform destroy`
 
 ### 3. Data Pipeline (Dataform)
 **What it does:**
@@ -164,11 +163,11 @@ gtm-tag-monitoring-gcp/
 - **Assertion Layer** (`02_assertions`): Runs configurable data quality checks
 
 **Key features:**
-- ✅ **SQL-based transformations**: Maintainable, testable data pipelines using familiar SQL
-- ✅ **Version-controlled queries**: All SQL logic stored in GitHub with full change history
-- ✅ **Automated scheduling**: Configurable cron-based workflow execution
-- ✅ **Built-in assertion framework**: Data quality checks with automatic failure logging and descriptive error messages
-- ✅ **Dependency management**: Automatic execution ordering based on query dependencies
+✅ **SQL-based transformations**: Maintainable, testable data pipelines using familiar SQL + JavaScript for code templating
+✅ **Version-controlled queries**: All SQL logic stored in GitHub with full change history
+✅ **Automated scheduling**: Configurable cron-based workflow execution
+✅ **Built-in error logging framework**: Data quality checks with automatic failure logging and descriptive error messages
+✅ **Dependency management**: Automatic execution ordering based on query dependencies
 
 ## Prerequisites
 
@@ -194,7 +193,7 @@ gcloud billing projects link YOUR_PROJECT_ID --billing-account=YOUR_BILLING_ACCO
 
 ### 2. Repository Setup
 
-Use this repository as a GitHub template, or clone it directly:
+Use this repository as a GitHub template, or clone it directly (and push it to your own repo):
 
 ```bash
 git clone https://github.com/datatovalue/gtm-tag-monitoring-gcp.git
