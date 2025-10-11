@@ -134,10 +134,15 @@ gtm-tag-monitoring-gcp/
 
 **Key features:**
 ✅ **Tag success/failure tracking**: Monitor which tags fired successfully or failed
+
 ✅ **Parameter non-null checks**: Ensure required parameters are present and non-null
+
 ✅ **Event volume monitoring**: Alert on abnormally low event counts
+
 ✅ **Tag volume monitoring**: Alert when specific tags fire below expected thresholds
+
 ✅ **Custom threshold configuration**: Set different thresholds per event, parameter, or tag
+
 ✅ **Time-based exclusions**: Skip monitoring during specified time ranges (e.g., overnight)
 
 ### 2. Infrastructure (Terraform)
@@ -151,9 +156,13 @@ gtm-tag-monitoring-gcp/
 
 **Key features:**
 ✅ **Infrastructure-as-Code**: Version-controlled, reproducible deployments
+
 ✅ **Remote state management**: GCS backend for team collaboration and state safety
+
 ✅ **Modular configuration**: Easily customizable through variables
+
 ✅ **Simple deployment**: Deploy entire infrastructure with `terraform apply`
+
 ✅ **Easy cleanup**: Remove all resources with `terraform destroy`
 
 ### 3. Data Pipeline (Dataform)
@@ -164,9 +173,13 @@ gtm-tag-monitoring-gcp/
 
 **Key features:**
 ✅ **SQL-based transformations**: Maintainable, testable data pipelines using familiar SQL + JavaScript for code templating
+
 ✅ **Version-controlled queries**: All SQL logic stored in GitHub with full change history
+
 ✅ **Automated scheduling**: Configurable cron-based workflow execution
+
 ✅ **Built-in error logging framework**: Data quality checks with automatic failure logging and descriptive error messages
+
 ✅ **Dependency management**: Automatic execution ordering based on query dependencies
 
 ## Prerequisites
