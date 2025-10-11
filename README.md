@@ -16,12 +16,13 @@ graph TB
     
     subgraph "GCP Infrastructure"
         LB[Global Load Balancer<br/>+ SSL Certificate]
-        GCS[Cloud Storage<br/>e.g.: monitor.website.com/collect.html endpoint]
+        GCS[Cloud Storage<br/>e.g.: collect.html endpoint]
         Logs[Cloud Logging<br/>Log Sink]
         
         subgraph "BigQuery"
             LogView[_AllLogs<br/>Log view]
             Staging[stg_gtm_tag_logs<br/>Staging table]
+            DF_Assert[Data quality checks<br/>- Non-null checks<br/>- Event count monitoring<br/>- Tag failure detection<br/>- Tag count monitoring]
             AssertionLogs[assertion_logs table<br/>All assertion results]
         end
         
@@ -29,7 +30,6 @@ graph TB
             DF_Repo[Dataform repository<br/>GitHub connection]
             DF_Release[Release config<br/>Compiles Dataform]
             DF_Workflow[Workflow config<br/>Runs Dataform]
-            DF_Assert[Data quality checks<br/>- Non-null checks<br/>- Event count monitoring<br/>- Tag failure detection<br/>- Tag count monitoring]
         end
         
         subgraph "Monitoring & Alerting"
@@ -39,7 +39,7 @@ graph TB
         end
     end
     
-    GTM -->|POST e.g.: monitor.website.com/collect| LB
+    GTM -->|POST e.g.: /collect| LB
     LB --> GCS
     GCS -->|Structured logs| Logs
     Logs -->|Linked dataset| LogView
@@ -47,7 +47,8 @@ graph TB
     DF_Repo --> DF_Release
     DF_Release -->|Triggers| DF_Workflow
     DF_Workflow -->|Reads| LogView
-    DF_Workflow -->|Materializes| Staging
+    DF_Workflow -->|Runs| Staging
+    DF_Workflow -->|Runs| DF_Assert
     Staging -->|Input for| DF_Assert
     
     DF_Assert -->|Failed assertions| ErrorBucket
