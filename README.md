@@ -16,7 +16,7 @@ graph TB
     
     subgraph "GCP Infrastructure"
         LB[Global Load Balancer<br/>+ SSL Certificate]
-        GCS[Cloud Storage<br/>e.g.: collect.html (customizable) endpoint]
+        GCS[Cloud Storage<br/>e.g.: collect.html endpoint]
         Logs[Cloud Logging<br/>Log Sink]
         
         subgraph "BigQuery"
@@ -39,7 +39,7 @@ graph TB
         end
     end
     
-    GTM -->|POST e.g.: /collect (customizable)| LB
+    GTM -->|POST e.g.: /collect| LB
     LB --> GCS
     GCS -->|Structured logs| Logs
     Logs -->|Linked dataset| LogView
