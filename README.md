@@ -16,7 +16,6 @@ This project provides an end-to-end infrastructure for monitoring GTM tag execut
   - [2. Infrastructure (Terraform)](#2-infrastructure-terraform)
   - [3. Data Pipeline (Dataform)](#3-data-pipeline-dataform)
 - [Features](#features)
-  - [Monitoring Capabilities](#monitoring-capabilities)
 - [Prerequisites](#prerequisites)
   - [Required Tools](#required-tools)
 - [Setup Instructions](#setup-instructions)
@@ -126,12 +125,19 @@ gtm-tag-monitoring-gcp/
 └── README.md
 ```
 
-## Components
+## Components & Features
 
 ### 1. GTM Monitoring tag
 - Custom GTM tag template that sends the event and tag metadata to the custom endpoint
 - Can be configured to send event parameters (beyond the regular tag metadata)
 - `eventName` field can be optionally overwritten (GTM dataLayer event name is used by default)
+
+- ✅ **Tag success/failure tracking**: Monitor which tags fired successfully or failed
+- ✅ **Parameter non-null check**: Ensure required parameters are present and non-null
+- ✅ **Event volume monitoring**: Alert on abnormally low event counts
+- ✅ **Tag volume monitoring**: Alert when specific tags fire below expected thresholds
+- ✅ **Custom threshold configuration**: Set different thresholds per event, parameter, or tag
+- ✅ **Time-based exclusions**: Skip monitoring during specified time ranges (e.g., overnight)
 
 ### 2. Infrastructure (Terraform)
 - **Load Balancer**: Global HTTPS load balancer with custom domain support (GCS as backend)
@@ -141,21 +147,22 @@ gtm-tag-monitoring-gcp/
 - **Dataform**: Automated SQL transformations and data quality assertions
 - **Cloud Monitoring**: Alert policies and notification channels
 
+- ✅ **Infrastructure-as-Code**: Version-controlled, reproducible deployments with automatic resource provisioning
+- ✅ **Remote (GCS) state nanagement**: Remote state backend in GCS for team collaboration and state safety
+- ✅ **Modular configuration**: Easily customizable through variables
+- ✅ **Easy deployment**: Deploy entire infrastructure with `terraform apply`
+- ✅ **Easy deletion**: Delete deployed infrastructure with `terraform destroy`
+
 ### 3. Data Pipeline (Dataform)
 - **Source Layer** (`00_sources`): Declares the BigQuery log view as a source
 - **Staging Layer** (`01_staging`): Transforms raw logs into a structured table where each row is an executed tag
-- **Assertion Layer** (`02_assertions`): Runs data quality checks with configurable thresholds
+- **Assertion Layer** (`02_assertions`): Runs data quality checks with configurable inputs
 
-## Features
-
-### Monitoring Capabilities
-- ✅ **Tag Success/Failure Tracking**: Monitor which tags fired successfully or failed
-- ✅ **Parameter Non-null Check**: Ensure required parameters are present and non-null
-- ✅ **Event Volume Monitoring**: Alert on abnormally low event counts
-- ✅ **Tag Volume Monitoring**: Alert when specific tags fire below expected thresholds
-- ✅ **Custom Threshold Configuration**: Set different thresholds per event, parameter, or tag
-- ✅ **Time-based Exclusions**: Skip monitoring during specified time ranges (e.g., overnight)
-
+- ✅ **SQL-based transformations (Dataform)**: Maintainable, testable data transformations using familiar SQL
+- ✅ **Version-controlled queries**: All SQL logic stored in GitHub with full change history
+- ✅ **Automated scheduling**: Workflow execution with configurable cron schedules
+- ✅ **Log-based assertion framework**: Data quality checks with automatic failure logging and descriptive error messages
+- ✅ **Dependency management**: Dataform handles execution order based on query dependencies
 
 ## Prerequisites
 
