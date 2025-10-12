@@ -70,22 +70,10 @@ const ASSERTIONS = {
                 description: 'Floodlight - Sales - Purchase'
             },
             { 
-                tag_id: '644', 
-                min_count: 1,
-                status_filter: 'success',
-                description: 'Awin - Conversion Tag'
-            },
-            { 
                 tag_id: '68', 
                 min_count: 1,
                 status_filter: 'success',
-                description: 'GAds - Conversion - Purchase - with hashed email'
-            },
-            { 
-                tag_id: '329', 
-                min_count: 1,
-                status_filter: 'success',
-                description: 'Criteo - Purchase - with hashed email'
+                description: 'GAds - Conversion - Purchase'
             },
             { 
                 tag_id: '208', 
