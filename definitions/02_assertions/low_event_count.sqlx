@@ -1,7 +1,7 @@
 config {
   type: "table", 
   schema: "assertions",
-  description: "Checking if event count is above threshold with time exclusions and timezone support",
+  description: "Checking if event count is above threshold with time/day exclusions and timezone support",
   dependencies: ["assertion_logs"],
   tags: ["assertions"],
   disabled: !require("includes/config.js").ASSERTIONS.low_event_count.enabled
@@ -22,39 +22,62 @@ pre_operations {
   declare passing_events string;
   declare total_expected_events int64;
   declare total_configured_events int64;
+  declare current_timezone_datetime datetime;
   declare current_timezone_time time;
+  declare current_day_of_week int64;
   declare timezone_info string default '${config.ASSERTIONS.low_event_count.timezone || "UTC"}';
   declare should_skip boolean default false;
+  declare skip_reason string;
   
-  -- get current time in the configured timezone
-  set current_timezone_time = time(datetime(current_timestamp(), timezone_info));
+  -- get current datetime, time, and day of week in the configured timezone
+  set current_timezone_datetime = datetime(current_timestamp(), timezone_info);
+  set current_timezone_time = time(current_timezone_datetime);
+  set current_day_of_week = extract(dayofweek from current_timezone_datetime);
   
-  -- check if we're currently in any excluded time range (dynamic from config)
-  ${config.ASSERTIONS.low_event_count.exclude_time_ranges?.length > 0 ? 
-    config.ASSERTIONS.low_event_count.exclude_time_ranges.map(range => {
-      const startTime = range.start_time;
-      const endTime = range.end_time;
-      
-      // Handle ranges that cross midnight vs same-day ranges
-      const condition = startTime > endTime 
-        ? `current_timezone_time >= parse_time('%T', '${startTime}') or current_timezone_time <= parse_time('%T', '${endTime}')`
-        : `current_timezone_time >= parse_time('%T', '${startTime}') and current_timezone_time <= parse_time('%T', '${endTime}')`;
-      
-      return `
-      if ${condition} then
-        set should_skip = true;
-      end if;`;
-    }).join(''): 
-    '-- no time exclusions configured'
-  }
+  -- check if current day should be excluded (1=Sunday, 7=Saturday)
+  ${config.ASSERTIONS.low_event_count.exclude_days?.length > 0 ? `
+  if current_day_of_week in (${config.ASSERTIONS.low_event_count.exclude_days.join(', ')}) then
+    set should_skip = true;
+    set skip_reason = format('excluded day (day %d)', current_day_of_week);
+  end if;` : '-- no day exclusions configured'}
+  
+  -- check if we're currently in any excluded time range (only if not already skipped)
+  if not should_skip then
+    ${config.ASSERTIONS.low_event_count.exclude_time_ranges?.length > 0 ? 
+      config.ASSERTIONS.low_event_count.exclude_time_ranges.map(range => {
+        const startTime = range.start_time;
+        const endTime = range.end_time;
+        
+        // Handle ranges that cross midnight vs same-day ranges
+        const condition = startTime > endTime 
+          ? `current_timezone_time >= parse_time('%T', '${startTime}') or current_timezone_time < parse_time('%T', '${endTime}')`
+          : `current_timezone_time >= parse_time('%T', '${startTime}') and current_timezone_time < parse_time('%T', '${endTime}')`;
+        
+        return `
+    if ${condition} then
+      set should_skip = true;
+      set skip_reason = 'excluded time range';
+    end if;`;
+      }).join(''): 
+      '-- no time exclusions configured'
+    }
+  end if;
   
   if should_skip then
     set assertion_status = 'skipped';
-    set error_msg = format('Assertion skipped - current time %s (%s) is in excluded time range${config.ASSERTIONS.low_event_count.exclude_time_ranges ? 
-      's: ' + config.ASSERTIONS.low_event_count.exclude_time_ranges.map(r => r.start_time + '-' + r.end_time).join(', ') : 
-      ''}', 
+    set error_msg = format('Assertion skipped - %s. Current time: %s (%s timezone, day %d)${
+      config.ASSERTIONS.low_event_count.exclude_days?.length > 0 || config.ASSERTIONS.low_event_count.exclude_time_ranges?.length > 0 ? 
+        '. Exclusions: ' + 
+        (config.ASSERTIONS.low_event_count.exclude_days?.length > 0 ? 
+          'days [' + config.ASSERTIONS.low_event_count.exclude_days.join(', ') + ']' : '') +
+        (config.ASSERTIONS.low_event_count.exclude_days?.length > 0 && config.ASSERTIONS.low_event_count.exclude_time_ranges?.length > 0 ? ', ' : '') +
+        (config.ASSERTIONS.low_event_count.exclude_time_ranges?.length > 0 ? 
+          'times [' + config.ASSERTIONS.low_event_count.exclude_time_ranges.map(r => r.start_time + '-' + r.end_time).join(', ') + ']' : '') : 
+        ''}', 
+                          skip_reason,
                           format_time('%T', current_timezone_time),
-                          timezone_info);
+                          timezone_info,
+                          current_day_of_week);
     
     -- log the skip
     insert into ${ref("assertion_logs")} (
@@ -79,7 +102,7 @@ pre_operations {
     );
     
   else
-    -- run normal assertion logic only during active hours
+    -- run normal assertion logic only during active hours/days
     set
       (check, sample, passing_events, total_expected_events, total_configured_events) = (
         select
@@ -119,11 +142,12 @@ pre_operations {
     if check > expectation then
       set assertion_status = 'fail';
       set error_msg = format(
-        "%d of %d event types failed thresholds in last %s (%s timezone). Failed: [%s]%s", 
+        "%d of %d event types failed thresholds in last %s (%s timezone, day %d). Failed: [%s]%s", 
         check, 
         total_configured_events,
         time_interval,
         timezone_info,
+        current_day_of_week,
         coalesce(sample, 'none'),
         case 
           when passing_events is not null 
@@ -133,10 +157,11 @@ pre_operations {
       );
     else 
       set error_msg = format(
-        "All %d event types above thresholds in last %s (%s timezone)%s", 
+        "All %d event types above thresholds in last %s (%s timezone, day %d)%s", 
         total_configured_events,
         time_interval,
         timezone_info,
+        current_day_of_week,
         case 
           when passing_events is not null 
           then format(". Details: [%s]", passing_events)

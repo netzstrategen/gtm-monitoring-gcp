@@ -32,6 +32,7 @@ const ASSERTIONS = {
         enabled: true,
         time_interval: '1 hour',
         timezone: 'Europe/Berlin',
+        exclude_days: [1, 7],  // Exclude Sunday (1) and Saturday (7)
         exclude_time_ranges: [
             { start_time: '23:00:00', end_time: '08:00:00' }  // 11PM-8AM overnight exclusion
         ],
@@ -51,6 +52,7 @@ const ASSERTIONS = {
         enabled: true,
         time_interval: '1 hour',
         timezone: 'Europe/Berlin',
+        exclude_days: [1, 7],  // Exclude Sunday (1) and Saturday (7)
         exclude_time_ranges: [
             { start_time: '23:00:00', end_time: '08:00:00' }  // same overnight exclusion
         ],
