@@ -344,6 +344,7 @@ const ASSERTIONS = {
         enabled: true,
         time_interval: '1 hour',
         timezone: 'Europe/Berlin',
+        exclude_days: [1, 7],  // Exclude Sunday (1) and Saturday (7)
         exclude_time_ranges: [
             { start_time: '23:00:00', end_time: '08:00:00' }
         ],
@@ -361,6 +362,7 @@ const ASSERTIONS = {
         enabled: true,
         time_interval: '1 hour',
         timezone: 'Europe/Berlin',
+        exclude_days: [1, 7],  // Exclude Sunday (1) and Saturday (7)
         exclude_time_ranges: [
             { start_time: '23:00:00', end_time: '08:00:00' }
         ],
@@ -383,6 +385,7 @@ module.exports = {
 - Use `time_interval` field to return a valid [INTERVAL object](https://cloud.google.com/bigquery/docs/reference/standard-sql/data-types#interval_type). It determines the time window to check. For example, if set to '15 minute' and the workflow runs at 10:00, it will check data from 9:45 to 10:00.
 - Use `threshold(s)` to allow a certain number of failures. Its format differs per data quality check.
 - Use `timezone` and `exclude_time_ranges` together to exclude certain time intervals for the `low_tag_count` and `low_event_count` checks. Useful for excluding overnight periods.
+- Use `exclude_days` to exclude any day of the week for `low_tag_count` and `low_event_count`. Days: 1=Sunday, 2=Monday, 3=Tuesday, 4=Wednesday, 5=Thursday, 6=Friday, 7=Saturday
 
 
 4. Commit and push your changes.
