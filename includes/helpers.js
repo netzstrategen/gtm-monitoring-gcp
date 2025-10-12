@@ -86,7 +86,7 @@ function generateEventCountQueryWithThresholds(tableRef, config) {
                 else 'above_threshold'
             end as failure_reason
         from (
-            select count(*) as actual_count
+            select count(distinct event_id) as actual_count
             from ${tableRef}
             where event_name = '${threshold.event_name}'
                 and timestamp >= timestamp_sub(current_timestamp(), interval ${interval})
