@@ -1,6 +1,0 @@
-config {
-  type: "table", 
-  schema: "assertions",
-  description: "Checking whether key params are null",
-  disabled: true
-}
