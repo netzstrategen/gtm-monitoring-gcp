@@ -1,5 +1,6 @@
 # GTM Tag Monitoring on GCP
 
+[![Blog Post](https://img.shields.io/badge/📝_Blog_Post-GTM_Tag_Monitoring-00ab6c?style=for-the-badge)](https://medium.com/@kriszkorpa/build-production-ready-gtm-tag-monitoring-on-gcp-with-terraform-and-dataform-07db14fd7dd1?source=friends_link&sk=6185e831232bddb27de560f0e3fe5610)
 [![LinkedIn](https://img.shields.io/badge/-LinkedIn-0077B5?style=flat-square&logo=linkedin&logoColor=white)](https://www.linkedin.com/in/krisztian-korpa)
 [![Website](https://img.shields.io/badge/-Data%20to%20Value-4285F4?style=flat-square&logo=google-chrome&logoColor=white)](https://datatovalue.com)
 [![Email](https://img.shields.io/badge/-Email-D14836?style=flat-square&logo=gmail&logoColor=white)](mailto:krisztian@datatovalue.com)
@@ -494,10 +495,18 @@ terraform destroy
 2. **Log retention**: Set appropriate retention periods to comply with data privacy regulations
 3. **PII data**: Avoid sending personally identifiable information through GTM monitoring
 
+## Acknowledgments
+
+This project builds upon excellent work by:
+- [Simo Ahava & Mark Edmondson](https://www.simoahava.com/analytics/google-tag-manager-monitor/) - For pioneering GTM monitoring techniques and the GTM tag template
+- [Eivind Savio](https://www.savio.no/) - For paving the way with the Cloud Storage-based solution
+
+Special thanks to the analytics community for continuous inspiration!
+
 ## License
 
 This project is licensed under the GNU GPL v3.0 License - see the [LICENSE](LICENSE) file for details.
 
 ## Support
 
-For issues, questions, or contributions email me at [krisztian@datatovalue.com](mailto:krisztian@datatovalue.com)
+For issues, questions, or contributions email me at [krisztian@datatovalue.com](mailto:krisztian@datatovalue.com) or reach out on [Linkedin](https://www.linkedin.com/in/krisztian-korpa)!
