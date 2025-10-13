@@ -1,4 +1,4 @@
-# GTM Tag Monitoring on GCP
+# GTM Monitoring on GCP
 
 [![Blog Post](https://img.shields.io/badge/📝_Blog_Post-GTM_Tag_Monitoring-00ab6c?style=for-the-badge)](https://medium.com/@kriszkorpa/build-production-ready-gtm-tag-monitoring-on-gcp-with-terraform-and-dataform-07db14fd7dd1?source=friends_link&sk=6185e831232bddb27de560f0e3fe5610)
 [![LinkedIn](https://img.shields.io/badge/-LinkedIn-0077B5?style=flat-square&logo=linkedin&logoColor=white)](https://www.linkedin.com/in/krisztian-korpa)
@@ -109,7 +109,7 @@ graph TB
 ### Project Structure
 
 ```
-gtm-tag-monitoring-gcp/
+gtm-monitoring-gcp/
 ├── definitions/                  # Dataform SQL definitions
 │   ├── 00_sources/              # Source declarations
 │   │   └── declarations.js      # BigQuery log view source
@@ -231,7 +231,7 @@ gcloud billing projects link YOUR_PROJECT_ID --billing-account=YOUR_BILLING_ACCO
 Use this repository as a GitHub template, or clone it directly (and push it to your own repo):
 
 ```bash
-git clone https://github.com/datatovalue/gtm-tag-monitoring-gcp.git
+git clone https://github.com/datatovalue/gtm-monitoring-gcp.git
 ```
 
 **For private repositories**: Create a [GitHub Personal Access Token](https://github.com/settings/personal-access-tokens) with these permissions:
