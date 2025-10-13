@@ -440,6 +440,9 @@ After triggering a test failure, check your email for the alert or the `assertio
 
 ## Cost Considerations
 
+> **⚠️ Important Disclaimer**  
+> This solution deploys billable GCP resources. You are responsible for all costs incurred from using this infrastructure. Monitor your GCP billing dashboard regularly and set up [budget alerts](https://cloud.google.com/billing/docs/how-to/budgets) to avoid unexpected charges. The cost estimates below are approximate and may vary based on your usage patterns, region, and traffic volume.
+
 1. **[Cloud Storage](https://cloud.google.com/storage/pricing)**: 2 small files so essentially free
 2. **[BigQuery](https://cloud.google.com/bigquery/pricing?hl=en)**: Query processing: $5-6/TB processed (depends on the amount of events that are tracked - if only used for conversion events, it's likely to be within free tier limits)
 3. **[Cloud Logging](https://cloud.google.com/stackdriver/pricing)**:
