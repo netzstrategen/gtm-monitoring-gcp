@@ -400,6 +400,26 @@ You can manually add Slack as a notification channel in GCP:
 2. Add **Slack** and authenticate with your workspace
 3. Edit the alert policy to include the Slack channel
 
+### 11. Optional: Test the Alerts
+
+To validate that the monitoring pipeline works as expected, you can intentionally trigger test failures:
+
+**Non-null:**
+- Omit a required field in GTM Debug mode (e.g., remove `transaction_id` from the dataLayer)
+- Fire the tag enough times to exceed the configured threshold
+- Expected result: Alert triggered for null values
+
+**Low event/tag count:**
+- Add a non-existent event name or tag ID to the `low_event_count` or `low_tag_count` thresholds in `config.js`
+- Expected result: Alert triggered for zero events/tags found
+
+**Tag failure:**
+- Create a custom GTM tag template that always fails by calling `data.gtmOnFailure()` immediately
+- Fire the tag enough times to exceed the failure threshold
+- Expected result: Alert triggered for tag failures
+
+After triggering a test failure, check your email for the alert or the `assertion_logs` table.
+
 ## Cost Considerations
 
 1. **[Cloud Storage](https://cloud.google.com/storage/pricing)**: 2 small files so essentially free
