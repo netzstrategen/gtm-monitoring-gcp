@@ -3,7 +3,7 @@ resource "google_logging_project_bucket_config" "logging_bucket" {
   project         = var.project_id
   location        = var.region
   bucket_id       = local.resource_names.logging_bucket
-  description     = "GTM Tag Monitoring Logs"
+  description     = "GTM Monitoring Logs"
   retention_days  = var.log_retention_days
   
   enable_analytics = true
@@ -56,7 +56,7 @@ resource "google_logging_linked_dataset" "logging_linked_dataset" {
   bucket      = local.resource_names.logging_bucket
   parent      = "projects/${var.project_id}"
   location    = var.region
-  description = "Linked dataset for GTM Tag Monitoring Logs"
+  description = "Linked dataset for GTM Monitoring Logs"
   
   depends_on = [google_logging_project_bucket_config.logging_bucket]
 }

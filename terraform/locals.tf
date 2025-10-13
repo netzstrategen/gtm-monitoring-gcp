@@ -6,10 +6,10 @@ data "google_project" "current" {}
 
 locals {
   resource_names = {
-    ip_address               = "${var.resource_prefix}-gtm-tag-monitor-static-ip"
-    health_check             = "${var.resource_prefix}-gtm-tag-monitor-health-check"
-    url_map                  = "${var.resource_prefix}-gtm-tag-monitor-url-map"
-    backend_bucket           = "${var.resource_prefix}-gtm-tag-monitor-backend-bucket"
+    ip_address               = "${var.resource_prefix}-gtm-monitor-static-ip"
+    health_check             = "${var.resource_prefix}-gtm-monitor-health-check"
+    url_map                  = "${var.resource_prefix}-gtm-monitor-url-map"
+    backend_bucket           = "${var.resource_prefix}-gtm-monitor-backend-bucket"
     certificate              = "${var.resource_prefix}-gtm-tag-monitor-cert"
     https_proxy              = "${var.resource_prefix}-gtm-tag-monitor-https-proxy"
     forwarding_rule          = "${var.resource_prefix}-gtm-tag-monitor-https-rule"

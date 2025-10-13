@@ -26,7 +26,7 @@ EOT
 # Dataform repo
 github_token           = ""
 github_username        = "datatovalue" # the part in the URL after github.com/
-github_repository      = "gtm-tag-monitoring-gcp"
+github_repository      = "gtm-monitoring-gcp"
 github_default_branch  = "main"
 # Dataform schedule
 dataform_release_cron  = "*/14 * * * *"  # Every 14 minutes

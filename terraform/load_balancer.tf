@@ -50,7 +50,7 @@ resource "google_compute_url_map" "tag_monitoring_url_map" {
 # Create a Google-managed SSL certificate
 resource "google_compute_managed_ssl_certificate" "tag_monitoring_cert" {
   name        = local.resource_names.certificate
-  description = "Google-managed certificate for tag monitoring"
+  description = "Google-managed certificate for GTM monitoring"
   
   managed {
     domains = [var.domain]
