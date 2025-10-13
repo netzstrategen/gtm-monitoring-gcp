@@ -1,10 +1,14 @@
 # GTM Tag Monitoring on GCP
 
+[![LinkedIn](https://img.shields.io/badge/-LinkedIn-0077B5?style=flat-square&logo=linkedin&logoColor=white)](https://www.linkedin.com/in/krisztian-korpa)
+[![Website](https://img.shields.io/badge/-Data%20to%20Value-4285F4?style=flat-square&logo=google-chrome&logoColor=white)](https://datatovalue.com)
+[![Email](https://img.shields.io/badge/-Email-D14836?style=flat-square&logo=gmail&logoColor=white)](mailto:krisztian@datatovalue.com)
+
 A comprehensive solution for monitoring Google Tag Manager (GTM) tag firing with automated alerting using Google Cloud Platform, Terraform, and Dataform.
 
 ## Overview
 
-This project provides an end-to-end infrastructure for monitoring GTM tag execution, storing event data in BigQuery, running automated data quality checks on the data, and sending alerts when issues are detected. The system captures GTM tag firing events from your website and validates them against configurable thresholds and conditions.
+This project provides an end-to-end infrastructure for monitoring GTM tag execution, storing event data in BigQuery (via Dataform), running automated data quality checks on the data, and sending alerts when issues are detected. The system captures GTM tag firing events from your website and validates them against configurable thresholds and conditions.
 
 <details open>
   <summary><h2>Table of Contents</h2></summary>
@@ -158,7 +162,7 @@ gtm-tag-monitoring-gcp/
 
 ✅ **Custom threshold configuration**: Set different thresholds per event, parameter, or tag
 
-✅ **Time-based exclusions**: Skip monitoring during specified time ranges (e.g., overnight)
+✅ **Time-based exclusions**: Skip monitoring during specified time ranges (e.g., overnight or weekend)
 
 ### 2. Infrastructure (Terraform)
 **What it does:**
@@ -419,7 +423,7 @@ You can manually add Slack as a notification channel in GCP:
 To validate that the monitoring pipeline works as expected, you can intentionally trigger test failures:
 
 **Non-null:**
-- Omit a required field in GTM Debug mode (e.g., remove `transaction_id` from the dataLayer)
+- Omit a required field in GTM Debug mode (e.g., remove `transaction_id` from a dataLayer.push that you run in Console or just add an empty/undefined value in the tag)
 - Fire the tag enough times to exceed the configured threshold
 - Expected result: Alert triggered for null values
 
