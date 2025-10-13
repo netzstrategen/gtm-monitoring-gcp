@@ -84,7 +84,8 @@ resource "google_service_account_iam_member" "dataform_agent_token_creator" {
   member             = "serviceAccount:service-${data.google_project.current.number}@gcp-sa-dataform.iam.gserviceaccount.com"
   
   depends_on = [
-    google_dataform_repository.main
+    google_dataform_repository.main,
+    google_service_account.dataform
   ]
 }
 
@@ -94,7 +95,8 @@ resource "google_service_account_iam_member" "dataform_agent_user" {
   member             = "serviceAccount:service-${data.google_project.current.number}@gcp-sa-dataform.iam.gserviceaccount.com"
   
   depends_on = [
-    google_dataform_repository.main
+    google_dataform_repository.main,
+    google_service_account.dataform
   ]
 }
 
