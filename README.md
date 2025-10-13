@@ -6,35 +6,49 @@ A comprehensive solution for monitoring Google Tag Manager (GTM) tag firing with
 
 This project provides an end-to-end infrastructure for monitoring GTM tag execution, storing event data in BigQuery, running automated data quality checks on the data, and sending alerts when issues are detected. The system captures GTM tag firing events from your website and validates them against configurable thresholds and conditions.
 
-## Table of Contents
-
-- [Overview](#overview)
-- [Architecture](#architecture)
-  - [Project Structure](#project-structure)
-- [Components & Features](#components--features)
-  - [1. GTM Monitoring Tag](#1-gtm-monitoring-tag)
-  - [2. Infrastructure (Terraform)](#2-infrastructure-terraform)
-  - [3. Data Pipeline (Dataform)](#3-data-pipeline-dataform)
-- [Prerequisites](#prerequisites)
-  - [Required Tools](#required-tools)
-- [Setup Instructions](#setup-instructions)
-  - [1. GCP Project Setup](#1-gcp-project-setup)
-  - [2. Repository Setup](#2-repository-setup)
-  - [3. Configure Terraform Variables](#3-configure-terraform-variables)
-  - [4. Configure Dataform Settings](#4-configure-dataform-settings)
-  - [5. Authenticate and Initialize](#5-authenticate-and-initialize)
-  - [6. Deploy Infrastructure](#6-deploy-infrastructure)
-  - [7. DNS Configuration](#7-dns-configuration)
-  - [8. GTM Configuration](#8-gtm-configuration)
-  - [9. Configure Dataform](#9-configure-dataform)
-  - [10. Optional: Add Slack Notifications Manually](#10-optional-add-slack-notifications-manually)
-- [Cost Considerations](#cost-considerations)
-- [Destroying the Infrastructure](#destroying-the-infrastructure)
-  - [Option 1: Delete the Entire Project](#option-1-delete-the-entire-project)
-  - [Option 2: Terraform Destroy](#option-2-terraform-destroy)
-- [Security Considerations](#security-considerations)
-- [License](#license)
-- [Support](#support)
+<details open>
+  <summary><h2>Table of Contents</h2></summary>
+  <ul>
+    <li><a href="#overview">Overview</a></li>
+    <li><a href="#architecture">Architecture</a></li>
+      <ul>
+        <li><a href="#project-structure">Project Structure</a></li>
+      </ul>
+    <li><a href="#components--features">Components & Features</a></li>
+      <ul>
+        <li><a href="#1-gtm-monitoring-tag">1. GTM Monitoring Tag</a></li>
+        <li><a href="#2-infrastructure-terraform">2. Infrastructure (Terraform)</a></li>
+        <li><a href="#3-data-pipeline-dataform">3. Data Pipeline (Dataform)</a></li>
+      </ul>
+    <li><a href="#prerequisites">Prerequisites</a></li>
+      <ul>
+        <li><a href="#required-tools">Required Tools</a></li>
+      </ul>
+    <li><a href="#setup-instructions">Setup Instructions</a></li>
+      <ul>
+        <li><a href="#1-gcp-project-setup">1. GCP Project Setup</a></li>
+        <li><a href="#2-repository-setup">2. Repository Setup</a></li>
+        <li><a href="#3-configure-terraform-variables">3. Configure Terraform Variables</a></li>
+        <li><a href="#4-configure-dataform-settings">4. Configure Dataform Settings</a></li>
+        <li><a href="#5-authenticate-and-initialize">5. Authenticate and Initialize</a></li>
+        <li><a href="#6-deploy-infrastructure">6. Deploy Infrastructure</a></li>
+        <li><a href="#7-dns-configuration">7. DNS Configuration</a></li>
+        <li><a href="#8-gtm-configuration">8. GTM Configuration</a></li>
+        <li><a href="#9-configure-dataform">9. Configure Dataform</a></li>
+        <li><a href="#10-optional-add-slack-notifications-manually">10. Optional: Add Slack Notifications Manually</a></li>
+        <li><a href="#11-optional-test-the-alerts">11. Optional: Test the Alerts</a></li>
+      </ul>
+    <li><a href="#cost-considerations">Cost Considerations</a></li>
+    <li><a href="#destroying-the-infrastructure">Destroying the Infrastructure</a></li>
+      <ul>
+        <li><a href="#option-1-delete-the-entire-project">Option 1: Delete the Entire Project</a></li>
+        <li><a href="#option-2-terraform-destroy">Option 2: Terraform Destroy</a></li>
+      </ul>
+    <li><a href="#security-considerations">Security Considerations</a></li>
+    <li><a href="#license">License</a></li>
+    <li><a href="#support">Support</a></li>
+  </ul>
+</details>
 
 ## Architecture
 
