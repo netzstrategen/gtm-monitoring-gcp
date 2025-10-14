@@ -124,12 +124,12 @@ gtm-monitoring-gcp/
 │   ├── 00_sources/              # Source declarations
 │   │   └── declarations.js      # BigQuery log view source
 │   ├── 01_staging/              # Data transformation layer
-│   │   └── gtm_events.sqlx      # Parse and structure GTM events
+│   │   └── stg_gtm_tag_logs.sqlx # Parse and structure GTM tag logs
 │   └── 02_assertions/           # Data quality checks
 │       ├── non_null.sqlx        # Validate required parameters
-│       ├── low_event_count.sqlx # Monitor event volumes
+│       ├── low_event_count.sqlx # Monitor event volume
 │       ├── tag_failure.sqlx     # Detect tag failures
-│       └── low_tag_count.sqlx   # Monitor tag firing rates
+│       └── low_tag_count.sqlx   # Monitor tag firing volume
 ├── includes/                     # Dataform configuration files
 │   ├── config.js                # Assertion configuration
 │   └── helpers.js               # Shared utility functions
