@@ -13,8 +13,8 @@ Created and maintained by **[Krisztian Korpa](https://www.linkedin.com/in/kriszt
 
 Read more: [Full article on Medium](https://medium.com/@kriszkorpa/build-production-ready-gtm-tag-monitoring-on-gcp-with-terraform-and-dataform-07db14fd7dd1?source=friends_link&sk=6185e831232bddb27de560f0e3fe5610)
 
-*We offer consulting for advanced GTM setups, data pipelines, and GCP infrastructure.*  
-Feel free to [get in touch](mailto:krisztian@datatovalue.com)!
+*We offer services to elevate digital marketing efforts through advanced GTM setups, clean data pipelines, and GCP infrastructure.
+Feel free to [get in touch](mailto:krisztian@datatovalue.com)!*
 
 ## Overview
 
@@ -23,6 +23,7 @@ This project provides an end-to-end infrastructure for monitoring GTM tag execut
 <details open>
   <summary><h2>Table of Contents</h2></summary>
   <ul>
+    <li><a href="#author">Author</a></li>
     <li><a href="#overview">Overview</a></li>
     <li><a href="#architecture">Architecture</a></li>
       <ul>
