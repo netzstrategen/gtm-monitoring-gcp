@@ -1,4 +1,4 @@
-# GTM Monitoring on GCP
+# GTM Monitoring System on GCP
 
 [![Blog Post](https://img.shields.io/badge/📝_Blog_Post-GTM_Monitoring-00ab6c?style=for-the-badge)](https://medium.com/@kriszkorpa/build-production-ready-gtm-tag-monitoring-on-gcp-with-terraform-and-dataform-07db14fd7dd1?source=friends_link&sk=6185e831232bddb27de560f0e3fe5610)
 [![LinkedIn](https://img.shields.io/badge/-LinkedIn-0077B5?style=flat-square&logo=linkedin&logoColor=white)](https://www.linkedin.com/in/krisztian-korpa)
