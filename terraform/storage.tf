@@ -1,4 +1,4 @@
-# 3. Create a GCS bucket for serving content
+# Create a GCS bucket for serving content
 resource "google_storage_bucket" "storage_bucket" {
   name          = local.resource_names.storage_bucket
   location      = var.region 
