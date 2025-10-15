@@ -1,6 +1,6 @@
 project_id         = "gcp-project-id"
 region             = "europe-west4" # only single region is supported
-domain             = "monitor.website.com" # you will need to map
+domain             = "monitor.website.com" # you will need to map an A record in your DNS settings
 endpoint           = "/tag"
 resource_prefix    = "dtv" # make it unique
 log_retention_days = 30 # possible: 1-3650 days
