@@ -22,37 +22,78 @@ const extractFromURL = (paramName, alias) => {
 function generateNonNullAssertionsWithCounts(tableName, config) {
   const fields = config.fields || [];
   const globalThreshold = config.threshold || 0;
+  const globalEventFilter = config.event_filter || null;
   
   if (!fields || fields.length === 0) {
     throw new Error('Fields array cannot be empty in non_null assertion config');
   }
   
-  // Get time interval from config
   const timeInterval = config.time_interval || '15 minute';
   
-  const unionQueries = fields.map(field => {
+  const unionQueries = [];
+  
+  fields.forEach(field => {
     const fieldInterval = field.time_interval || timeInterval;
     const fieldThreshold = field.threshold !== undefined ? field.threshold : globalThreshold;
     
-    return `
+    // Determine event filter: field-specific overrides global
+    let eventFilter;
+    if (field.hasOwnProperty('event_filter')) {
+      // Field explicitly specified event_filter
+      eventFilter = (field.event_filter === '*' || field.event_filter === 'all') 
+        ? null 
+        : field.event_filter;
+    } else {
+      // Field didn't specify, inherit global
+      eventFilter = globalEventFilter;
+    }
+    
+    // Convert single event to array for uniform handling
+    let eventList;
+    if (eventFilter === null || eventFilter === undefined) {
+      // No filter - check all events as one query
+      eventList = [null];
+    } else if (Array.isArray(eventFilter)) {
+      // Array of events - filter out empty values
+      eventList = eventFilter.filter(e => e && e.trim());
+      if (eventList.length === 0) {
+        eventList = [null]; // Empty array = check all events
+      }
+    } else if (typeof eventFilter === 'string' && eventFilter.trim()) {
+      // Single event string
+      eventList = [eventFilter];
+    } else {
+      // Invalid filter - check all events
+      eventList = [null];
+    }
+    
+    // Generate a separate query for EACH event
+    eventList.forEach(event => {
+      const eventFilterClause = event ? `and event_name = '${event}'` : '';
+      const eventDisplay = event || 'all events';
+      
+      unionQueries.push(`
     select 
       '${field.name}' as field_name,
+      '${eventDisplay}' as event_name,
       count(distinct event_id) as null_count,
       ${fieldThreshold} as threshold,
-      '${field.name} is null' as failing_row_condition,
+      '${field.name} is null on ${eventDisplay}' as failing_row_condition,
       case 
         when count(distinct event_id) > ${fieldThreshold} then 'fail'
         else 'pass'
       end as status
     from ${tableName}
     where ${field.name} is null
-      and timestamp >= timestamp_sub(current_timestamp(), interval ${fieldInterval})`;
+      and timestamp >= timestamp_sub(current_timestamp(), interval ${fieldInterval})
+      ${eventFilterClause}`);
+    });
   });
   
-  // Return all fields (including those with 0 nulls for complete reporting)
   return `
     select 
       field_name,
+      event_name,
       null_count,
       threshold,
       failing_row_condition,

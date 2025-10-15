@@ -362,11 +362,29 @@ const ASSERTIONS = {
     non_null: {
         enabled: true,
         time_interval: '15 minute',
-        threshold: 5,
+        threshold: 5,  // allow up to 5 null values before failing
+        event_filter: [], // global, applies event filter to all fields
         fields: [
-            { name: 'transaction_id', threshold: 5 },
-            { name: 'sku', threshold: 5 },
-            { name: 'purchase_value', threshold: 5 }
+            { 
+                name: 'transaction_id',
+                threshold: 5,  // field-specific threshold (optional)
+                event_filter: 'purchase'
+            },
+            { 
+                name: 'sku',
+                threshold: 7,  // allow more nulls for sku field
+                event_filter: ['view_item', 'add_to_cart', 'purchase'] // takes precedence over global
+            },
+            { 
+                name: 'purchase_value',
+                threshold: 5,
+                event_filter: 'purchase'
+            },
+            { 
+                name: 'path',
+                threshold: 5
+                // checks all events
+            }
         ]
     },
     low_event_count: {
@@ -415,6 +433,7 @@ module.exports = {
 - Use `threshold(s)` to allow a certain number of failures. Its format differs per data quality check.
 - Use `timezone` and `exclude_time_ranges` together to exclude certain time intervals for the `low_tag_count` and `low_event_count` checks. Useful for excluding overnight periods.
 - Use `exclude_days` to exclude any day of the week for `low_tag_count` and `low_event_count`. Days: 1=Sunday, 2=Monday, 3=Tuesday, 4=Wednesday, 5=Thursday, 6=Friday, 7=Saturday
+- Use `event_filter` to check for null parameters only on specific events (e.g., only check `transaction_id` on `purchase` events). Can be set globally (applies to all fields) or per field (overrides global).
 
 
 4. Commit and push your changes.

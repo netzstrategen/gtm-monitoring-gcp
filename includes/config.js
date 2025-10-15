@@ -11,18 +11,27 @@ const ASSERTIONS = {
         enabled: true,
         time_interval: '15 minute',
         threshold: 5,  // allow up to 5 null values before failing
+        event_filter: [], // applies event filter to all fields (optional)
         fields: [
             { 
                 name: 'transaction_id',
-                threshold: 5  // field-specific threshold (optional)
+                threshold: 5,  // field-specific threshold (optional)
+                event_filter: 'purchase' // takes precedence over global (optional)
             },
             { 
                 name: 'sku',
-                threshold: 5  // allow more nulls for sku field
+                threshold: 7,  // allow more nulls for sku field
+                event_filter: ['view_item', 'add_to_cart', 'purchase']
             },
             { 
                 name: 'purchase_value',
+                threshold: 5,
+                event_filter: 'purchase'
+            },
+            { 
+                name: 'path',
                 threshold: 5
+                // checks all events
             }
         ]
     },
