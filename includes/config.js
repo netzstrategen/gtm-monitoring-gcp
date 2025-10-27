@@ -46,14 +46,14 @@ const ASSERTIONS = {
             { start_time: '23:00:00', end_time: '08:00:00' }  // 11PM-8AM overnight exclusion
         ],
         thresholds: [
-            { event_name: 'place-order', min_count: 1 }
+            { event_name: 'purchase', min_count: 5 }
         ]
     },
     tag_failure: {
         enabled: true,
         time_interval: '15 minute',
         threshold: 2,
-        exclude_tag_ids: ['68','563','208']
+        exclude_tag_ids: ['87']
     },
     low_tag_count: {
         // note: if the exclude_time_range end_date is 6:00 and interval is 1 hour,
@@ -77,18 +77,6 @@ const ASSERTIONS = {
                 min_count: 1,
                 status_filter: 'success',
                 description: 'GA4 - add_to_cart'
-            },
-            { 
-                tag_id: '68', 
-                min_count: 1,
-                status_filter: 'success',
-                description: 'GAds - Conversion - Purchase'
-            },
-            { 
-                tag_id: '208', 
-                min_count: 1,
-                status_filter: 'success',
-                description: 'Microsoft - Conversion - purchase'
             }
         ]
     }
