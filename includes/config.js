@@ -67,16 +67,16 @@ const ASSERTIONS = {
         ],
         thresholds: [
             { 
-                tag_id: '529', 
+                tag_id: '105', 
                 min_count: 1,
                 status_filter: 'success',
                 description: 'GA4 - purchase'
             },
             { 
-                tag_id: '170', 
+                tag_id: '100', 
                 min_count: 1,
                 status_filter: 'success',
-                description: 'Floodlight - Sales - Purchase'
+                description: 'GA4 - add_to_cart'
             },
             { 
                 tag_id: '68', 

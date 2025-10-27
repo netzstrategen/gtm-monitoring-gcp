@@ -1,5 +1,5 @@
-defaultProject: your-project-id
-defaultLocation: your-region
+defaultProject: gtm-monitoring-gcp
+defaultLocation: europe-west3
 defaultDataset: dataform
 defaultAssertionDataset: assertions
 dataformCoreVersion: 3.0.0

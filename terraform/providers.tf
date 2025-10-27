@@ -20,9 +20,11 @@ terraform {
 provider "google" {
   project = var.project_id
   region  = var.region
+  credentials = file("/Users/maroufali/keys/gtm-monitoring-gcp-6e33c5d5ea38.json")
 }
 
 provider "google-beta" {
   project = var.project_id
   region  = var.region
+  credentials = file("/Users/maroufali/keys/gtm-monitoring-gcp-6e33c5d5ea38.json")
 }
