@@ -19,11 +19,6 @@ const ASSERTIONS = {
                 event_filter: 'purchase' // takes precedence over global (optional)
             },
             { 
-                name: 'sku',
-                threshold: 7,  // allow more nulls for sku field
-                event_filter: ['view_item', 'add_to_cart', 'purchase']
-            },
-            { 
                 name: 'purchase_value',
                 threshold: 5,
                 event_filter: 'purchase'
