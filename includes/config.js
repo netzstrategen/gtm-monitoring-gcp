@@ -46,12 +46,12 @@ const ASSERTIONS = {
             { start_time: '23:00:00', end_time: '08:00:00' }  // 11PM-8AM overnight exclusion
         ],
         thresholds: [
-            { event_name: 'purchase', min_count: 5 }
+            { event_name: 'page_view', min_count: 5 }
         ]
     },
     tag_failure: {
         enabled: true,
-        time_interval: '15 minute',
+        time_interval: '30 minute',
         threshold: 2,
         exclude_tag_ids: ['87']
     },
@@ -67,16 +67,10 @@ const ASSERTIONS = {
         ],
         thresholds: [
             { 
-                tag_id: '105', 
+                tag_id: '87', 
                 min_count: 1,
                 status_filter: 'success',
-                description: 'GA4 - purchase'
-            },
-            { 
-                tag_id: '100', 
-                min_count: 1,
-                status_filter: 'success',
-                description: 'GA4 - add_to_cart'
+                description: 'GA4 - Init'
             }
         ]
     }
