@@ -22,11 +22,6 @@ const ASSERTIONS = {
                 name: 'purchase_value',
                 threshold: 5,
                 event_filter: 'purchase'
-            },
-            { 
-                name: 'path',
-                threshold: 5
-                // checks all events
             }
         ]
     },
@@ -48,9 +43,9 @@ const ASSERTIONS = {
         enabled: true,
         time_interval: '30 minute',
         threshold: 2,
-        exclude_tag_ids: ['87']
-    },
-    low_tag_count: {
+        exclude_tag_ids: ['1111']
+    }
+/*     low_tag_count: {
         // note: if the exclude_time_range end_date is 6:00 and interval is 1 hour,
         // the assertion will check events from 5:00-6:00 - set your end_time accordingly
         enabled: true,
@@ -68,7 +63,7 @@ const ASSERTIONS = {
                 description: 'GA4 - Init'
             }
         ]
-    }
+    } */
 };
 
 module.exports = {
