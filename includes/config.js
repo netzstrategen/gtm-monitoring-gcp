@@ -11,7 +11,7 @@ const ASSERTIONS = {
         enabled: true,
         time_interval: '15 minute',
         threshold: 5,  // allow up to 5 null values before failing
-        event_filter: [], // applies event filter to all fields (optional)
+        event_filter: ['purchase'], // applies event filter to all fields (optional)
         fields: [
             { 
                 name: 'transaction_id',
@@ -37,7 +37,7 @@ const ASSERTIONS = {
         ],
         thresholds: [
             { 
-                tag_id: '87', 
+                tag_id: '275', 
                 min_count: 3,
                 status_filter: 'success',
                 description: 'GA4 - Init'
@@ -62,7 +62,7 @@ const ASSERTIONS = {
         ],
         thresholds: [
             { 
-                tag_id: '87', 
+                tag_id: '275', 
                 min_count: 1,
                 status_filter: 'success',
                 description: 'GA4 - Init'
