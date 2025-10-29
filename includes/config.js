@@ -29,7 +29,7 @@ const ASSERTIONS = {
         // note: if the exclude_time_range end_date is 6:00 and interval is 1 hour,
         // the assertion will check events from 5:00-6:00 - set your end_time accordingly
         enabled: true,
-        time_interval: '1 hour',
+        time_interval: '1 day',
         timezone: 'Europe/Berlin',
         exclude_days: [1, 7],  // Exclude Sunday (1) and Saturday (7)
         exclude_time_ranges: [
@@ -38,7 +38,7 @@ const ASSERTIONS = {
         thresholds: [
             { 
                 event_name: 'page_view', 
-                min_count: 1,
+                min_count: 10,
                 status_filter: 'success',
                 description: 'GA4 Pageview Monitoring'
             }
