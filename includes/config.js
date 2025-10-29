@@ -37,10 +37,10 @@ const ASSERTIONS = {
         ],
         thresholds: [
             { 
-                tag_id: '275', 
-                min_count: 3,
+                event_name: 'page_view', 
+                min_count: 1,
                 status_filter: 'success',
-                description: 'GA4 - Init'
+                description: 'GA4 Pageview Monitoring'
             }
         ]
     },
