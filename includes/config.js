@@ -53,7 +53,7 @@ const ASSERTIONS = {
     low_tag_count: {
         // note: if the exclude_time_range end_date is 6:00 and interval is 1 hour,
         // the assertion will check events from 5:00-6:00 - set your end_time accordingly
-        enabled: false,
+        enabled: true,
         time_interval: '1 hour',
         timezone: 'Europe/Berlin',
         exclude_days: [1, 7],  // Exclude Sunday (1) and Saturday (7)
@@ -62,7 +62,7 @@ const ASSERTIONS = {
         ],
         thresholds: [
             { 
-                tag_id: '275', 
+                tag_id: '87', 
                 min_count: 1,
                 status_filter: 'success',
                 description: 'GA4 - Init'
